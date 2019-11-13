@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Grand Bank</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" defer></script>
+    <script src="index.js" defer></script>
+</head>
+<body>
+<div class="container-fluid row">
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1 id="userName"></h1>
+                    <h3>Баланс: <span id="userBalance"></span></h3>
+                </div>
+                <div class="col">
+                    <ul class="list-group" style="width: 40%" id="itemsToBuyList"></ul>
+                    <span id="totalSum">Всего: 0</span>
+                    <br>
+                    <span>Налог: 15%</span>
+                    <br>
+                    <div class="mt-1">
+                        <button class="btn btn-primary" onclick="showPincode()">
+                            Купить
+                        </button>
+                        <button class="btn btn-secondary" onclick="cancel()">
+                            Отменить
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3" id="itemsToBuy"></div>
+        </div>
+    </main>
+
+    <div class="modal fade" tabindex="-1" id="chooseUserRow">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Выбор клиента</h4>
+                </div>
+                <div class="modal-body mb-3">
+                    <span class="text-muted">Введите номер кредитной карточки клиента</span>
+                    <div class="center mt-2">
+                        <input type="number" id="creditCardInput" class="beautiful-input" style="width: 50%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="pincodeRow">   
+        <div class="modal-dialog pincode-modal modal-content modal-body mb-0 p-0" role="document">
+            <div class="pincode text-center" draggable="true">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closePincode()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="text-muted" id="pincodeTitile">Пожалуйста, введите ваш пин-код</span>
+                <div id="pinPasswordInput">
+                    <input class="pincode-box" type="password" disabled>
+                    <div class="circle-loader" hidden>
+                        <div class="checkmark draw"></div>
+                    </div>
+                </div>
+                <div id="pincodeButtons">
+                    <input type="button" class="pincode-button" value="1">
+                    <input type="button" class="pincode-button" value="2">
+                    <input type="button" class="pincode-button" value="3">
+                    <br>
+                    <input type="button" class="pincode-button" value="4">
+                    <input type="button" class="pincode-button" value="5">
+                    <input type="button" class="pincode-button" value="6">
+                    <br>
+                    <input type="button" class="pincode-button" value="7">
+                    <input type="button" class="pincode-button" value="8">
+                    <input type="button" class="pincode-button" value="9">
+                </div>
+                <input type="button" class="pincode-button clear" value="clear" onclick="pincodeBox.value = ''">
+                <input type="button" class="pincode-button" value="0" onclick="addNumber(0)">
+                <button class="pincode-button clear" onclick="backspace()">
+                    <svg width="40px" height="40px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512; margin-right: 5px; margin-bottom: 1px;" xml:space="preserve">
+                        <path d="M490.667,64H133.077c-7.196,0-13.906,3.627-17.848,9.647L3.485,244.314c-4.647,7.098-4.647,16.274,0,23.372     l111.744,170.667c3.942,6.02,10.652,9.647,17.848,9.647h357.589c11.782,0,21.333-9.551,21.333-21.333V85.333     C512,73.551,502.449,64,490.667,64z M469.333,405.333H144.609L46.833,256l97.776-149.333h324.725V405.333z"/>
+                        <path d="M198.246,356.418c8.331,8.331,21.839,8.331,30.17,0l70.248-70.248l70.248,70.248c8.331,8.331,21.839,8.331,30.17,0     s8.331-21.839,0-30.17L328.834,256l70.248-70.248c8.331-8.331,8.331-21.839,0-30.17s-21.839-8.331-30.17,0l-70.248,70.248     l-70.248-70.248c-8.331-8.331-21.839-8.331-30.17,0c-8.331,8.331-8.331,21.839,0,30.17L268.495,256l-70.248,70.248     C189.915,334.58,189.915,348.087,198.246,356.418z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>    
+</body>
+</html>
