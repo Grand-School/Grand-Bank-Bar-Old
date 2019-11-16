@@ -1,6 +1,7 @@
-const baseLink = 'http://localhost:8080/rest/';
-const barImgUrl = 'http://localhost:8080/resources/img/bar/';
+const websiteLink = 'http://localhost:8080/'
 const jwtToken = 'Authorization';
+const baseLink = websiteLink + 'rest/';
+const barImgUrl = websiteLink + 'resources/img/bar/';
 const userName = document.getElementById('userName');
 const userBalance = document.getElementById('userBalance');
 const chooseUserRow = document.getElementById('chooseUserRow');
@@ -19,7 +20,7 @@ let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
 const cancel = () => $(chooseUserRow).modal();
 let rowHideAble = false, loginRowHideAble = false;
-let selectedUser, failedNote;
+let selectedUser, failedNote, lastRfid;
 
 $(() => {
     $.ajaxSetup({cache: false});
@@ -45,15 +46,7 @@ $(() => {
         $.ajax(baseLink + 'bar/' + creditCard)
             .done(response => {
                 console.log(response);
-                selectedUser = response;
-                userName.textContent = response.name + ' ' + response.surname;
-                userBalance.textContent = response.balance + ' грандиков';
-                itemsToBuyList.innerHTML = '';
-                totalSum.textContent = 'Всего: 0';
-                rowHideAble = true;
-                $(chooseUserRow).modal('hide');
-                rowHideAble = false;
-                creditCardInput.value = '';
+                loadUser(response);
             });
     });
 
@@ -84,6 +77,35 @@ $(() => {
 
     $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
     $(loginRow).modal({ keyboard: false });
+    
+    let socket = io();
+    socket.on('card', card => {
+        card = card.substr(20);
+        if (lastRfid === card) {
+            return;
+        }
+
+        console.log(card);
+
+        lastRfid = card;
+        $.get(baseLink + 'bar/rfid/' + card)
+            .done(response => {
+                console.log(response);
+                loadUser(response);
+            });
+    });
+
+    function loadUser(user) {
+        selectedUser = user;
+        userName.textContent = user.name + ' ' + user.surname;
+        userBalance.textContent = user.balance + ' грандиков';
+        itemsToBuyList.innerHTML = '';
+        totalSum.textContent = 'Всего: 0';
+        rowHideAble = true;
+        $(chooseUserRow).modal('hide');
+        rowHideAble = false;
+        creditCardInput.value = '';
+    }
 });
 
 function loadInfo() {
@@ -146,6 +168,8 @@ function buy(pinCode) {
             pincodeCircle.hidden = true;
             setDefaultPinLoader();
         }, 1000);
+        lastRfid = null;
+        selectedUser = null;
     });
 }
 
