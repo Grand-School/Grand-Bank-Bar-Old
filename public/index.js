@@ -196,11 +196,23 @@ function failNoty(jqXHR) {
     }).show();
 }
 
-function failNotyText(text) {
+function failClosedNoty(jqXHR, timeout = 2000) {
+    closeNoty();
+    const errorInfo = JSON.parse(jqXHR.responseText);
     failedNote = new Noty({
-        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;<br>" + text,
+        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + errorInfo.type + "<br>" + errorInfo.details.join("<br>"),
         type: "error",
-        layout: "bottomRight"
+        layout: "bottomRight",
+        timeout
+    }).show();
+}
+
+function failNotyText(text, timeout = 2000) {
+    failedNote = new Noty({
+        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + text,
+        type: "error",
+        layout: "bottomRight",
+        timeout
     }).show();
 }
 
