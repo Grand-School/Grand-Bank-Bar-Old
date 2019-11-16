@@ -1,3 +1,6 @@
+const baseLink = 'http://localhost:8080/rest/';
+const barImgUrl = 'http://localhost:8080/resources/img/bar/';
+const jwtToken = 'Authorization';
 const userName = document.getElementById('userName');
 const userBalance = document.getElementById('userBalance');
 const chooseUserRow = document.getElementById('chooseUserRow');
@@ -8,11 +11,14 @@ const totalSum = document.getElementById('totalSum');
 const pincodeBox = document.querySelector('.pincode-box');
 const pincodeTitile = document.getElementById('pincodeTitile');
 const pincodeRow = document.getElementById('pincodeRow');
+const loginRow = document.getElementById('loginRow');
+const loginInput = document.getElementById('loginInput');
+const passwordInput = document.getElementById('passwordInput');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
 const cancel = () => $(chooseUserRow).modal();
-let rowHideAble = false;
+let rowHideAble = false, loginRowHideAble = false;
 let selectedUser, failedNote;
 
 $(() => {
@@ -30,34 +36,15 @@ $(() => {
         addNumber(value);
     });
 
-    $.get('/ajax/bar/items?shown=true')
-        .done(response => {
-            response.forEach(item => {
-                let img = '';
-                if (item.image !== undefined && item.image !== '') {
-                    img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
-                }
-                itemsToBuy.insertAdjacentHTML('beforeend', `
-                    <div class="col-sm-2">
-                        <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
-                            ${img}
-                            <div class="card-body">
-                                <h5 class="card-title text-center">${item.name}</h5>
-                            </div>
-                        </div>
-                    </div>
-                `);
-            })
-        });
-
     creditCardInput.addEventListener('input', e => {
         let creditCard = creditCardInput.value;
         if (creditCard.length !== 12) {
             return;
         }
 
-        $.ajax('/ajax/bar/get/' + creditCard)
+        $.ajax(baseLink + 'bar/' + creditCard)
             .done(response => {
+                console.log(response);
                 selectedUser = response;
                 userName.textContent = response.name + ' ' + response.surname;
                 userBalance.textContent = response.balance + ' грандиков';
@@ -93,9 +80,34 @@ $(() => {
         updatePrice();
     });
 
-    $(chooseUserRow).modal({ keyboard: false });
     $(chooseUserRow).on('hide.bs.modal', e => rowHideAble);
+
+    $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
+    $(loginRow).modal({ keyboard: false });
 });
+
+function loadInfo() {
+    $.get(baseLink + 'bar/items?shown=true')
+        .done(response => {
+            console.log(response);
+            response.forEach(item => {
+                let img = '';
+                if (item.image !== undefined && item.image !== '') {
+                    img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
+                }
+                itemsToBuy.insertAdjacentHTML('beforeend', `
+                    <div class="col-sm-2">
+                        <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
+                            ${img}
+                            <div class="card-body">
+                                <h5 class="card-title text-center">${item.name}</h5>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            })
+        });
+}
 
 function showPincode() {
     pincodeCallback = buy;
@@ -109,7 +121,7 @@ function buy(pinCode) {
     pincodeCircle.hidden = false;
 
     $.ajax({
-        url: `/ajax/bar?userId=${selectedUser.id}&pinCode=${pinCode}`,
+        url: baseLink + `bar/?userId=${selectedUser.id}&pinCode=${pinCode}`,
         method: 'POST',
         data: JSON.stringify(data.items),
         contentType: "application/json; charset=utf-8",
@@ -123,6 +135,7 @@ function buy(pinCode) {
             }, 1000);
         }
     }).done(response => {
+        console.log(response);
         togglePinComplete();
         successNoty("Товарвы были успешны куплены!");
         setTimeout(() => {
@@ -178,6 +191,14 @@ function failNoty(jqXHR) {
     const errorInfo = JSON.parse(jqXHR.responseText);
     failedNote = new Noty({
         text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + errorInfo.type + "<br>" + errorInfo.details.join("<br>"),
+        type: "error",
+        layout: "bottomRight"
+    }).show();
+}
+
+function failNotyText(text) {
+    failedNote = new Noty({
+        text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;<br>" + text,
         type: "error",
         layout: "bottomRight"
     }).show();
@@ -239,4 +260,29 @@ function togglePinError() {
 function setDefaultPinLoader() {
     $(pincodeCircle).removeClass('load-error').removeClass('load-complete');
     $(pincodeCheckmark).removeClass('error').addClass('draw').toggle();
+}
+
+function login() {
+    $.ajax({
+        url: baseLink + `login?login=${loginInput.value}&password=${passwordInput.value}`,
+        method: 'POST',
+        error: request => done(request),
+        success: (data, status, request) => done(request)
+    });
+
+    function done(request) {
+        let token = request.getResponseHeader(jwtToken);
+        if (token === null) {
+            failNotyText('Вы ввели неверный логин или пароль');
+            return;
+        }
+
+        $(document).ajaxSend((e, xhr) => {
+            xhr.setRequestHeader(jwtToken, token);
+        });
+        loginRowHideAble = true;
+        $(loginRow).modal('hide');
+        loadInfo();
+        $(chooseUserRow).modal({ keyboard: false });
+    }
 }
