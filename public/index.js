@@ -15,6 +15,7 @@ const pincodeRow = document.getElementById('pincodeRow');
 const loginRow = document.getElementById('loginRow');
 const loginInput = document.getElementById('loginInput');
 const passwordInput = document.getElementById('passwordInput');
+const tax = document.getElementById('tax');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
@@ -109,6 +110,11 @@ $(() => {
 });
 
 function loadInfo() {
+    $.get(baseLink + 'bar/tax')
+        .done(response => {
+            tax.textContent = `Налог: ${response}%`;
+        });
+        
     $.get(baseLink + 'bar/items?shown=true')
         .done(response => {
             console.log(response);
