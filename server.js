@@ -14,6 +14,7 @@ app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static(__dirname + '/node_modules/noty/lib'));
 app.use(express.static(__dirname + '/node_modules/jquery/dist'));
 app.use(express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'));
+app.use(express.static(__dirname + '/node_modules/popper.js/dist'));
 
 http.listen(port, () => console.log(`App listening on port ${port}!\nYou may connect by adress - http://localhost:3000/`));
 

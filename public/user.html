@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Grand Bank</title>
+        
+        <link rel="stylesheet" href="css/all.min.css">
+        <link rel="stylesheet" href="noty.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+    
+        <script src="jquery.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
+        <script src="noty.min.js" defer></script>
+        <script src="/socket.io/socket.io.js" defer></script>
+        <script src="script.js" defer></script>
+        <script src="templates.js" defer></script>
+        <script src="users.js" defer></script>
+    </head>
+<body>
+<div class="container-fluid row">
+    <main role="main" class="col-md-9 col-lg-10 px-4">
+        <h1>Пользователи</h1>
+        <div>
+            <div class="mb-2 custom-right">
+                 <span id="loadMsg" role="status" style="margin-bottom: -7px;" class="spinner-border-medium">
+                    <span class="sr-only">Загрузка</span>
+                </span>
+                <button onclick="createUserModal()" class="btn btn-primary">
+                    <span class="fa fa-plus"></span>
+                    Добавить пользователя
+                </button>
+                <button onclick="render()" class="btn btn-secondary">
+                    <span class="fa fa-refresh"></span>
+                    Обновить
+                </button>
+            </div>
+            <nav>
+                <ul class="pagination" id="classList"></ul>
+            </nav>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Имя</th>
+                        <th scope="col">Фамилия</th>
+                        <th scope="col">Логин</th>
+                        <th scope="col">Роль</th>
+                        <th scope="col">Баланс</th>
+                        <th scope="col">Кредитная карта</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal fade" tabindex="-1" id="editRow">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="titleRow"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRow">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <span class="fa fa-close"></span>
+                        Отменить
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveButton">
+                        <span class="fa fa-check"></span>
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="loginRow">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Авторизация</h4>
+                </div>
+                <div class="modal-body mb-3">
+                    <div class="form-group">
+                        <label for="loginInput">Логин</label>
+                        <input type="text" name="login" id="loginInput" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordInput">Пароль</label>
+                        <input type="password" name="password" id="passwordInput" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="login()">
+                        Войти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
