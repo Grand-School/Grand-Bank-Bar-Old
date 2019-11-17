@@ -2,12 +2,36 @@ const websiteLink = 'http://localhost:8080/'
 const jwtToken = 'Authorization';
 const baseLink = websiteLink + 'rest/';
 const barImgUrl = websiteLink + 'resources/img/bar/';
+const loginForm = document.getElementById('loginForm');
 let failedNote;
 
 $(() => {
     $.ajaxSetup({cache: false});
 
     $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
+
+    jQuery.loadScript = function (url, callback) {
+        jQuery.ajax({
+            url: url,
+            dataType: 'script',
+            success: callback,
+            async: true
+        });
+    }
+
+    $.get(websiteLink + 'rest/api/recaptcha')
+        .done(response => {
+            formInputs.insertAdjacentHTML('beforeend', `
+                <div class="g-recaptcha mb-2" data-sitekey="${response}"></div>            
+            `);
+            
+            $.loadScript('https://www.google.com/recaptcha/api.js', function() {});
+        });
+
+    loginForm.addEventListener('submit', e => {
+        e.preventDefault();
+        login();
+    })
 });
 
 function closeNoty() {

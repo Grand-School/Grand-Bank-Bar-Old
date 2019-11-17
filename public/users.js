@@ -5,6 +5,7 @@ const formRow = document.getElementById('formRow');
 const saveButtonRow = document.getElementById('saveButton');
 const loadMsg = document.getElementById('loadMsg');
 const classList = document.getElementById('classList');
+const formInputs = document.getElementById('formInputs');
 let userRole = 'ROLE_RESPONSIBLE';
 let currentClass = 5;
 let updateUrl, createUrl, classes, lastCard;
@@ -32,8 +33,9 @@ $(() => {
 
 function login() {
     $.ajax({
-        url: baseLink + `login?login=${loginInput.value}&password=${passwordInput.value}`,
+        url: baseLink + `login`,
         method: 'POST',
+        data: $(loginForm).serialize(),
         error: request => done(request),
         success: (data, status, request) => done(request)
     });

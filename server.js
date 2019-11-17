@@ -16,6 +16,10 @@ app.use(express.static(__dirname + '/node_modules/jquery/dist'));
 app.use(express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'));
 app.use(express.static(__dirname + '/node_modules/popper.js/dist'));
 
+app.get('/users', (req, resp) => {
+    resp.sendFile(__dirname + '/public/users.html');
+});
+
 http.listen(port, () => console.log(`App listening on port ${port}!\nYou may connect by adress - http://localhost:3000/`));
 
 socket.on('connection', socket => {

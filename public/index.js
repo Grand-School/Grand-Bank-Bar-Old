@@ -232,8 +232,9 @@ function setDefaultPinLoader() {
 
 function login() {
     $.ajax({
-        url: baseLink + `login?login=${loginInput.value}&password=${passwordInput.value}`,
+        url: baseLink + `login`,
         method: 'POST',
+        data: $(loginForm).serialize(),
         error: request => done(request),
         success: (data, status, request) => done(request)
     });
@@ -241,7 +242,7 @@ function login() {
     function done(request) {
         let token = request.getResponseHeader(jwtToken);
         if (token === null) {
-            failNotyText('Вы ввели неверный логин или пароль');
+            failNotyText('Вы ввели неверный логин и пароль или не подтвердили капчу');
             return;
         }
 
