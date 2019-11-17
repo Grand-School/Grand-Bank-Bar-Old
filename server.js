@@ -10,7 +10,12 @@ const socket = require('socket.io')(http);
 let user;
 
 app.use(express.static('public'));
-http.listen(port, () => console.log(`App listening on port ${port}!`));
+app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use(express.static(__dirname + '/node_modules/noty/lib'));
+app.use(express.static(__dirname + '/node_modules/jquery/dist'));
+app.use(express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free'));
+
+http.listen(port, () => console.log(`App listening on port ${port}!\nYou may connect by adress - http://localhost:3000/`));
 
 socket.on('connection', socket => {
     console.log('User connected');
