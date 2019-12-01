@@ -15,7 +15,10 @@ const tax = document.getElementById('tax');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
-const cancel = () => $(chooseUserRow).modal();
+const cancel = () => {
+    $(chooseUserRow).modal();
+    setTimeout(() => creditCardInput.focus(), 500);
+}
 let rowHideAble = false, loginRowHideAble = false;
 let selectedUser, lastRfid;
 
@@ -64,6 +67,19 @@ $(() => {
         let target = e.target.closest('li');
         itemsToBuyList.removeChild(target);
         updatePrice();
+    });
+
+    pincodeBox.addEventListener('keydown', e => {
+        let input = e.key;
+        if (!'1234567890'.includes(input) && input !== 'Backspace') {
+            e.preventDefault();
+            return;
+        }
+
+        let value = e.target.value + input;
+        if (value.length === 4) {
+            buy(value);
+        }
     });
 
     $(chooseUserRow).on('hide.bs.modal', e => rowHideAble);
@@ -132,6 +148,7 @@ function loadInfo() {
 function showPincode() {
     pincodeCallback = buy;
     $(pincodeRow).modal();
+    setTimeout(() => pincodeBox.focus(), 500);
 }
 
 function buy(pinCode) {
@@ -152,6 +169,7 @@ function buy(pinCode) {
                 pincodeBox.hidden = false;
                 pincodeCircle.hidden = true;
                 setDefaultPinLoader();
+                pincodeBox.focus();
             }, 1000);
         }
     }).done(response => {
@@ -162,6 +180,7 @@ function buy(pinCode) {
             $(pincodeRow).modal('hide');
             pincodeBox.value = '';
             $(chooseUserRow).modal();
+            setTimeout(() => creditCardInput.focus(), 500);
             pincodeBox.hidden = false;
             pincodeCircle.hidden = true;
             setDefaultPinLoader();
@@ -253,5 +272,6 @@ function login() {
         $(loginRow).modal('hide');
         loadInfo();
         $(chooseUserRow).modal({ keyboard: false });
+        setTimeout(() => creditCardInput.focus(), 500);
     }
 }
