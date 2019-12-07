@@ -17,6 +17,7 @@ let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
 const cancel = () => {
     $(chooseUserRow).modal();
+    lastRfid = null;
     setTimeout(() => creditCardInput.focus(), 500);
 }
 let rowHideAble = false, loginRowHideAble = false;

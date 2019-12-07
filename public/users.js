@@ -11,7 +11,10 @@ let currentClass = 5;
 let updateUrl, createUrl, classes, lastCard;
 
 $(() => {
-    $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
+    $(loginRow).on('hide.bs.modal', e => {
+        lastCard = null;
+        return loginRowHideAble;
+    });
     $(loginRow).modal({ keyboard: false });
 
     let socket = io();
