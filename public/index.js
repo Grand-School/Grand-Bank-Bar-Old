@@ -21,7 +21,7 @@ const cancel = () => {
     setTimeout(() => creditCardInput.focus(), 500);
 }
 let rowHideAble = false, loginRowHideAble = false;
-let selectedUser, lastRfid;
+let selectedUser, lastRfid, creditCards;
 
 $(() => {
     document.getElementById('pincodeButtons').addEventListener('click', e => {
@@ -109,6 +109,7 @@ $(() => {
         selectedUser = user;
         userName.textContent = user.name + ' ' + user.surname;
         userBalance.textContent = user.balance + ' грандиков';
+        tax.textContent = 'Налог: ' + getCreditCardTax(user.cardType) + '%';
         itemsToBuyList.innerHTML = '';
         totalSum.textContent = 'Всего: 0';
         rowHideAble = true;
@@ -118,31 +119,40 @@ $(() => {
     }
 });
 
+function getCreditCardTax(cardType) {
+    for (let card in creditCards) {
+        if (creditCards[card].codeName === cardType) {
+            return creditCards[card].tax.purchase;
+        }
+    }
+    return 0;
+}
+
 function loadInfo() {
-    $.get(baseLink + 'bar/tax')
+    $.get(baseLink + 'api/creditcard')
         .done(response => {
-            tax.textContent = `Налог: ${response}%`;
-        });
-        
-    $.get(baseLink + 'bar/items?shown=true')
-        .done(response => {
-            console.log(response);
-            response.forEach(item => {
-                let img = '';
-                if (item.image !== undefined && item.image !== '') {
-                    img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
-                }
-                itemsToBuy.insertAdjacentHTML('beforeend', `
-                    <div class="col-sm-2">
-                        <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
-                            ${img}
-                            <div class="card-body">
-                                <h5 class="card-title text-center">${item.name}</h5>
+            creditCards = response;
+
+            $.get(baseLink + 'bar/items?shown=true')
+                .done(response => {
+                    console.log(response);
+                    response.forEach(item => {
+                        let img = '';
+                        if (item.image !== undefined && item.image !== '') {
+                            img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
+                        }
+                        itemsToBuy.insertAdjacentHTML('beforeend', `
+                            <div class="col-sm-2">
+                                <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
+                                    ${img}
+                                    <div class="card-body">
+                                        <h5 class="card-title text-center">${item.name}</h5>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                `);
-            })
+                        `);
+                    })
+                });
         });
 }
 
