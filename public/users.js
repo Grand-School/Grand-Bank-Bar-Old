@@ -8,7 +8,7 @@ const classList = document.getElementById('classList');
 const formInputs = document.getElementById('formInputs');
 let userRole = 'ROLE_RESPONSIBLE';
 let currentClass = 5;
-let updateUrl, createUrl, classes, lastCard;
+let updateUrl, createUrl, classes, lastCard, creditCards;
 
 $(() => {
     $(loginRow).on('hide.bs.modal', e => {
@@ -60,6 +60,9 @@ function login() {
 }
 
 function loadInfo() {
+    $.get(baseLink + 'api/creditcard')
+        .done(response => creditCards = response);
+
     $.get(baseLink + 'users/profile')
         .done(response => {
             userRole = response.role;

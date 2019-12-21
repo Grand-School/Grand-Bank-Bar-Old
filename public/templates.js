@@ -1,6 +1,6 @@
 const getIdDiv = id => `<input type="hidden" name="id" value="${id}">`;
 
-function getBaseDataDiv({ name, surname, username, balance, creditCard, password, salary, RFID }, usePassword = false) {
+function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType, password, salary, RFID }, usePassword = false) {
     let pass = usePassword ? getBasePasswordInput('Пароль', 'password', password) : '';
     return `
         ${getBaseTextInput('Имя', 'name', name)}
@@ -10,6 +10,7 @@ function getBaseDataDiv({ name, surname, username, balance, creditCard, password
         ${getBaseNumInput('Баланс', 'balance', balance)}
         ${chooseClass(arguments[0].class)}
         ${getBaseTextInput('Кредитная карточка', 'creditCard', creditCard)}
+        ${chooseCardType(cardType)}
         ${getBasePasswordInput('Пин-код', 'pinCode', '')}
         ${getBaseNumInput('Зарплата', 'salary', salary)}
         ${getBaseTextInput('RFID', 'RFID', RFID )}
@@ -38,6 +39,26 @@ const getBaseBoolean = (placeholder, name, selected, hint = '') => `
         </select>
     </div>
 `;
+
+const chooseCardType = selected => {
+    let result = `
+        <div class="form-group">
+            <label for="cardType" class="col-form-label">Тип кредитной карточки</label>
+            <select name="cardType" id="cardType" class="form-control">
+    `;
+
+    for (let card in creditCards) {
+        let name = creditCards[card].name;
+        let codeName = creditCards[card].codeName;
+        result += `<option value="${codeName}" ${selected === codeName ? 'selected' : ''}>${name}</option>`
+    }
+
+    result += `
+            </select>
+        </div>
+    `;
+    return result;
+}
 
 let getRolesDiv = role => {
     if (userRole !== 'ROLE_ADMIN') {
