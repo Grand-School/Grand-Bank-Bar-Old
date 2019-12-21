@@ -41,10 +41,7 @@ $(() => {
         }
 
         $.ajax(baseLink + 'bar/' + creditCard)
-            .done(response => {
-                console.log(response);
-                loadUser(response);
-            });
+            .done(response => loadUser(response));
     });
 
     itemsToBuy.addEventListener('click', e => {
@@ -95,12 +92,9 @@ $(() => {
             return;
         }
 
-        console.log(card);
-
         lastRfid = card;
         $.get(baseLink + 'bar/rfid/' + card)
             .done(response => {
-                console.log(response);
                 loadUser(response);
             });
     });
@@ -135,7 +129,6 @@ function loadInfo() {
 
             $.get(baseLink + 'bar/items?shown=true')
                 .done(response => {
-                    console.log(response);
                     response.forEach(item => {
                         let img = '';
                         if (item.image !== undefined && item.image !== '') {
@@ -184,7 +177,6 @@ function buy(pinCode) {
             }, 1000);
         }
     }).done(response => {
-        console.log(response);
         togglePinComplete();
         successNoty("Товарвы были успешны куплены!");
         setTimeout(() => {

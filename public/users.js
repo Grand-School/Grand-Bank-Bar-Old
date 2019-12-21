@@ -26,7 +26,6 @@ $(() => {
 
         let RFID = document.getElementById('RFID');
         if (RFID !== null) {
-            console.log(card);
             lastCard = card;
             RFID.value = card;
             successNoty('Set user RFID = ' + card);
