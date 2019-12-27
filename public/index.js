@@ -139,7 +139,11 @@ function loadInfo() {
                                 <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
                                     ${img}
                                     <div class="card-body">
-                                        <h5 class="card-title text-center">${item.name}</h5>
+                                        <h5 class="card-title text-center">
+                                            ${item.name}
+                                            <span class="badge badge-primary badge-pill">${item.price}</span>
+                                            <span class="badge badge-secondary badge-pill">${item.count}</span>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
