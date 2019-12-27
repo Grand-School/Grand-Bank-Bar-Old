@@ -1,6 +1,6 @@
 const getIdDiv = id => `<input type="hidden" name="id" value="${id}">`;
 
-function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType, password, salary, RFID }, usePassword = false) {
+function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType, password, salary, RFID, theme, frozen }, usePassword = false) {
     let pass = usePassword ? getBasePasswordInput('Пароль', 'password', password) : '';
     return `
         ${getBaseTextInput('Имя', 'name', name)}
@@ -14,12 +14,24 @@ function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType
         ${getBasePasswordInput('Пин-код', 'pinCode', '')}
         ${getBaseNumInput('Зарплата', 'salary', salary)}
         ${getBaseTextInput('RFID', 'RFID', RFID )}
+        ${getThemeSelect(theme)}
+        ${getBaseBoolean('Заморожен счёт', 'frozen', frozen)}
     `;
 }
 
 const getBaseTextInput = (placeholder, name, value, hint) => getBaseInput(placeholder, name, value, 'text', hint);
 const getBasePasswordInput = (placeholder, name, value, hint) => getBaseInput(placeholder, name, value, 'password', hint);
 const getBaseNumInput = (placeholder, name, value) => getBaseInput(placeholder, name, value, 'number');
+
+let getThemeSelect = theme => `
+    <div class="form-group">
+        <label for="theme" class="col-form-label">Тема</label>
+        <select name="theme" id="theme">
+            <option ${theme === 'LIGHT' ? 'selected' : ''} value="LIGHT">СВЕТЛАЯ</option>
+            <option ${theme === 'DARK' ? 'selected' : ''} value="DARK">ТЁМНАЯ</option>
+        </select>
+    </div>
+`;
 
 const getBaseInput = (placeholder, name, value, type, hint = '') => `
     <div class="form-group">
@@ -99,3 +111,4 @@ const pinCodeHint = getHint('Оставьте это поле пустым, чт
 const couponsUserHint = getHint('Если купон использован его больше никто не может использовать');
 const couponMessageHint = getHint('Рекомендуем написать причину, по которой человек получил купон. Пример: За выигрышь в конкурсе.');
 const rfidMessageHint = getHint('Уникальный ключ карты, указываеться производителем.');
+const frozenBalanceMessageHint = getHint('Заморожен ли баланс? Если да - пользователь, к примеру, не может осуществлять покупки или переводить баланс.');
