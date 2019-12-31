@@ -12,6 +12,7 @@ const loginRow = document.getElementById('loginRow');
 const loginInput = document.getElementById('loginInput');
 const passwordInput = document.getElementById('passwordInput');
 const tax = document.getElementById('tax');
+const pincodeSound = new Audio('pincode-succes.mp3');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
@@ -182,6 +183,7 @@ function buy(pinCode) {
         }
     }).done(response => {
         togglePinComplete();
+        pincodeSound.play();
         successNoty("Товарвы были успешны куплены!");
         setTimeout(() => {
             $(pincodeRow).modal('hide');
