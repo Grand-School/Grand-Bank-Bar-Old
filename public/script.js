@@ -20,12 +20,15 @@ $(() => {
     }
 
     $.get(websiteLink + 'rest/api/recaptcha')
-        .done(response => {
-            formInputs.insertAdjacentHTML('beforeend', `
-                <div class="g-recaptcha mb-2" data-sitekey="${response}"></div>            
-            `);
-            
-            $.loadScript('https://www.google.com/recaptcha/api.js', function() {});
+        .done(reCaptchaToken => {
+            $.loadScript('https://www.google.com/recaptcha/api.js?render=' + reCaptchaToken, () => {
+                grecaptcha.ready(() => {
+                    grecaptcha.execute(reCaptchaToken, { action: 'login' })
+                        .then(token => {
+                            document.querySelectorAll('input[name="reCaptchaResponse"]').forEach(el => el.value = token);
+                        });
+                });
+            });
         });
 
     loginForm.addEventListener('submit', e => {
