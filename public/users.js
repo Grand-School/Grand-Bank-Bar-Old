@@ -186,7 +186,8 @@ function create() {
     $.ajax({
         type: 'POST',
         url: createUrl,
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно создали пользователя!");
@@ -198,7 +199,8 @@ function save() {
     $.ajax({
         type: 'POST',
         url: updateUrl,
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно обновили пользователя!");
@@ -210,7 +212,8 @@ function updatePass() {
     $.ajax({
         type: 'POST',
         url: baseLink + 'users/' + 'password',
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно обновили пароль пользователя!");

@@ -46,8 +46,8 @@ const getBaseBoolean = (placeholder, name, selected, hint = '') => `
         <label for="${name}" class="col-form-label">${placeholder}</label>
         ${hint}
         <select class="form-control" id="${name}" name="${name}" placeholder="${placeholder}">
-           <option ${selected ? 'selected' : ''}>TRUE</option>
-           <option ${!selected ? 'selected' : ''}>FALSE</option>
+           <option value="true" ${selected ? 'selected' : ''}>TRUE</option>
+           <option value="false" ${!selected ? 'selected' : ''}>FALSE</option>
         </select>
     </div>
 `;

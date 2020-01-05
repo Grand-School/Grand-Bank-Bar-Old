@@ -102,3 +102,15 @@ function getTime(date) {
     let minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     return hours + ':' + minutes;
 }
+
+function formDataToJson(form) {
+    let serializedArray = $(form).serializeArray();
+    let data = {};
+
+    for (let item in serializedArray) {
+        let input = serializedArray[item];
+        data[input.name] = input.value;
+    }
+
+    return JSON.stringify(data);
+}
