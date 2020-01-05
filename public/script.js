@@ -3,6 +3,7 @@ const jwtToken = 'Authorization';
 const baseLink = websiteLink + 'rest/';
 const barImgUrl = websiteLink + 'resources/img/bar/';
 const loginForm = document.getElementById('loginForm');
+const rememberMe = document.getElementById('rememberMe');
 let failedNote;
 
 $(() => {
@@ -34,8 +35,22 @@ $(() => {
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
         login();
-    })
+    });
+
+    let jwt = getCookie('jwt');
+    if (jwt !== undefined) {
+        proccessLogin(jwt);
+    } else {
+        $(loginRow).modal({ keyboard: false });
+    }
 });
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 function closeNoty() {
     if (failedNote) {

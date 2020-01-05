@@ -15,7 +15,6 @@ $(() => {
         lastCard = null;
         return loginRowHideAble;
     });
-    $(loginRow).modal({ keyboard: false });
 
     let socket = io();
     socket.on('card', card => {
@@ -49,13 +48,21 @@ function login() {
             return;
         }
 
-        $(document).ajaxSend((e, xhr) => {
-            xhr.setRequestHeader(jwtToken, token);
-        });
-        loginRowHideAble = true;
-        $(loginRow).modal('hide');
-        loadInfo();
+        proccessLogin(token);
+
+        if (rememberMe.checked) {
+            document.cookie = `jwt=${token}; max-age=3600`;
+        }
     }
+}
+
+function proccessLogin(token) {
+    $(document).ajaxSend((e, xhr) => {
+        xhr.setRequestHeader(jwtToken, token);
+    });
+    loginRowHideAble = true;
+    $(loginRow).modal('hide');
+    loadInfo();
 }
 
 function loadInfo() {

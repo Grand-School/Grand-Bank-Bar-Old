@@ -84,7 +84,6 @@ $(() => {
     $(chooseUserRow).on('hide.bs.modal', e => rowHideAble);
 
     $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
-    $(loginRow).modal({ keyboard: false });
     
     let socket = io();
     socket.on('card', card => {
@@ -273,14 +272,21 @@ function login() {
             failNotyText('Вы ввели неверный логин и пароль или не подтвердили капчу');
             return;
         }
-
-        $(document).ajaxSend((e, xhr) => {
-            xhr.setRequestHeader(jwtToken, token);
-        });
-        loginRowHideAble = true;
-        $(loginRow).modal('hide');
-        loadInfo();
-        $(chooseUserRow).modal({ keyboard: false });
-        setTimeout(() => creditCardInput.focus(), 500);
+        proccessLogin(token);
+        
+        if (rememberMe.checked) {
+            document.cookie = `jwt=${token}; max-age=3600`;
+        }
     }
+}
+
+function proccessLogin(token) {
+    $(document).ajaxSend((e, xhr) => {
+        xhr.setRequestHeader(jwtToken, token);
+    });
+    loginRowHideAble = true;
+    $(loginRow).modal('hide');
+    loadInfo();
+    $(chooseUserRow).modal({ keyboard: false });
+    setTimeout(() => creditCardInput.focus(), 500);
 }
