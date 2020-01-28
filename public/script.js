@@ -3,6 +3,7 @@ const jwtToken = 'Authorization';
 const baseLink = websiteLink + 'rest/';
 const barImgUrl = websiteLink + 'resources/img/bar/';
 const loginForm = document.getElementById('loginForm');
+const rememberMe = document.getElementById('rememberMe');
 let failedNote;
 
 $(() => {
@@ -20,19 +21,36 @@ $(() => {
     }
 
     $.get(websiteLink + 'rest/api/recaptcha')
-        .done(response => {
-            formInputs.insertAdjacentHTML('beforeend', `
-                <div class="g-recaptcha mb-2" data-sitekey="${response}"></div>            
-            `);
-            
-            $.loadScript('https://www.google.com/recaptcha/api.js', function() {});
+        .done(reCaptchaToken => {
+            $.loadScript('https://www.google.com/recaptcha/api.js?render=' + reCaptchaToken, () => {
+                grecaptcha.ready(() => {
+                    grecaptcha.execute(reCaptchaToken, { action: 'login' })
+                        .then(token => {
+                            document.querySelectorAll('input[name="reCaptchaResponse"]').forEach(el => el.value = token);
+                        });
+                });
+            });
         });
 
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
         login();
-    })
+    });
+
+    let jwt = getCookie('jwt');
+    if (jwt !== undefined) {
+        proccessLogin(jwt);
+    } else {
+        $(loginRow).modal({ keyboard: false });
+    }
 });
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 function closeNoty() {
     if (failedNote) {
@@ -98,4 +116,16 @@ function getTime(date) {
     let hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     let minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     return hours + ':' + minutes;
+}
+
+function formDataToJson(form) {
+    let serializedArray = $(form).serializeArray();
+    let data = {};
+
+    for (let item in serializedArray) {
+        let input = serializedArray[item];
+        data[input.name] = input.value;
+    }
+
+    return JSON.stringify(data);
 }

@@ -8,14 +8,13 @@ const classList = document.getElementById('classList');
 const formInputs = document.getElementById('formInputs');
 let userRole = 'ROLE_RESPONSIBLE';
 let currentClass = 5;
-let updateUrl, createUrl, classes, lastCard;
+let updateUrl, createUrl, classes, lastCard, creditCards;
 
 $(() => {
     $(loginRow).on('hide.bs.modal', e => {
         lastCard = null;
         return loginRowHideAble;
     });
-    $(loginRow).modal({ keyboard: false });
 
     let socket = io();
     socket.on('card', card => {
@@ -26,7 +25,6 @@ $(() => {
 
         let RFID = document.getElementById('RFID');
         if (RFID !== null) {
-            console.log(card);
             lastCard = card;
             RFID.value = card;
             successNoty('Set user RFID = ' + card);
@@ -50,16 +48,27 @@ function login() {
             return;
         }
 
-        $(document).ajaxSend((e, xhr) => {
-            xhr.setRequestHeader(jwtToken, token);
-        });
-        loginRowHideAble = true;
-        $(loginRow).modal('hide');
-        loadInfo();
+        proccessLogin(token);
+
+        if (rememberMe.checked) {
+            document.cookie = `jwt=${token}; max-age=3600`;
+        }
     }
 }
 
+function proccessLogin(token) {
+    $(document).ajaxSend((e, xhr) => {
+        xhr.setRequestHeader(jwtToken, token);
+    });
+    loginRowHideAble = true;
+    $(loginRow).modal('hide');
+    loadInfo();
+}
+
 function loadInfo() {
+    $.get(baseLink + 'api/creditcard')
+        .done(response => creditCards = response);
+
     $.get(baseLink + 'users/profile')
         .done(response => {
             userRole = response.role;
@@ -184,7 +193,8 @@ function create() {
     $.ajax({
         type: 'POST',
         url: createUrl,
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно создали пользователя!");
@@ -196,7 +206,8 @@ function save() {
     $.ajax({
         type: 'POST',
         url: updateUrl,
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно обновили пользователя!");
@@ -208,7 +219,8 @@ function updatePass() {
     $.ajax({
         type: 'POST',
         url: baseLink + 'users/' + 'password',
-        data: $(formRow).serialize()
+        contentType: 'application/json',
+        data: formDataToJson(formRow)
     }).done(() => {
         $(editRow).modal('hide');
         successNoty("Вы успешно обновили пароль пользователя!");

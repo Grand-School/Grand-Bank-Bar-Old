@@ -91,6 +91,7 @@
                     <h4 class="modal-title">Авторизация</h4>
                 </div>
                 <form id="loginForm">
+                    <input type="hidden" name="reCaptchaResponse">
                     <div class="modal-body mb-3" id="formInputs">
                         <div class="form-group">
                             <label for="loginInput">Логин</label>
@@ -99,6 +100,10 @@
                         <div class="form-group">
                             <label for="passwordInput">Пароль</label>
                             <input type="password" name="password" id="passwordInput" class="form-control"/>
+                        </div>
+                        <div class="form-group form-check">
+                            <input class="form-check-input" id="rememberMe" type="checkbox" name="remember">
+                            <label class="form-check-label" for="rememberMe">Запомнить меня на 1 час</label>
                         </div>
                     </div>
                     <div class="modal-footer" style="margin-top: -20px;">

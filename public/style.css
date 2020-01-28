@@ -280,3 +280,7 @@
         opacity: 1;
     }
 }
+
+div#itemsToBuy div {
+    margin-bottom: 5px;
+}
