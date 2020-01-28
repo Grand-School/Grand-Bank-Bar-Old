@@ -12,6 +12,7 @@ const loginRow = document.getElementById('loginRow');
 const loginInput = document.getElementById('loginInput');
 const passwordInput = document.getElementById('passwordInput');
 const tax = document.getElementById('tax');
+const withdrawSpan = document.getElementById('withdraw');
 const pincodeSound = new Audio('pincode-succes.mp3');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
@@ -22,7 +23,7 @@ const cancel = () => {
     setTimeout(() => creditCardInput.focus(), 500);
 }
 let rowHideAble = false, loginRowHideAble = false;
-let selectedUser, lastRfid, creditCards;
+let selectedUser, lastRfid, creditCards, barItemsStorage;
 
 $(() => {
     document.getElementById('pincodeButtons').addEventListener('click', e => {
@@ -51,12 +52,21 @@ $(() => {
             return;
         }
 
+        let discount = target.dataset.discount;
         let price = target.dataset.price;
+        if (discount !== undefined) {
+            let percent = price * discount / 100;
+            price -= percent;
+            price = price <= 10 ? Math.round(price) : Math.round(price * 100.0) / 100.0;
+        }
+
+        let discountDiv = discount === undefined ? '' : `<span class="badge badge-success badge-pill">-${discount}%</span>`;
 
         itemsToBuyList.insertAdjacentHTML('beforeend', `
             <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${target.dataset.id}" data-price="${price}">
                 ${target.dataset.name}
                 <span class="badge badge-primary badge-pill">${price}</span>
+                ${discountDiv}
             </li>
         `);
         updatePrice();
@@ -103,13 +113,16 @@ $(() => {
         selectedUser = user;
         userName.textContent = user.name + ' ' + user.surname;
         userBalance.textContent = user.balance + ' грандиков';
-        tax.textContent = 'Налог: ' + getCreditCardTax(user.cardType) + '%';
+        let userTax = getCreditCardTax(user.cardType);
+        tax.textContent = `Налог: ${userTax}%`;
+        tax.dataset.tax = userTax;
         itemsToBuyList.innerHTML = '';
         totalSum.textContent = 'Всего: 0';
         rowHideAble = true;
         $(chooseUserRow).modal('hide');
         rowHideAble = false;
         creditCardInput.value = '';
+        showDiscount(user.cardType);
     }
 });
 
@@ -129,6 +142,7 @@ function loadInfo() {
 
             $.get(baseLink + 'bar/items?shown=true')
                 .done(response => {
+                    barItemsStorage = response;
                     response.forEach(item => {
                         let img = '';
                         if (item.image !== undefined && item.image !== '') {
@@ -144,6 +158,10 @@ function loadInfo() {
                                             <span class="badge badge-primary badge-pill">${item.price}</span>
                                             <span class="badge badge-secondary badge-pill">${item.count}</span>
                                         </h5>
+                                        <div class="discount_div_${item.id} text-center">
+                                            <hr>
+                                            <small class="text-muted"></small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -199,8 +217,12 @@ function buy(pinCode) {
 }
 
 function updatePrice() {
-    let totalPrice = getBuyData().totalPrice;
+    let buyData = getBuyData();
+    let totalPrice = buyData.totalPrice;
+    let userTax = +tax.dataset.tax;
+
     totalSum.textContent = 'Всего: ' + totalPrice;
+    withdrawSpan.textContent = `К снятию: ${totalPrice + (totalPrice * userTax / 100)}`;
     userBalance.style.color = selectedUser.balance - totalPrice < 0 ? 'red' : 'black';
 }
 
@@ -289,4 +311,28 @@ function proccessLogin(token) {
     loadInfo();
     $(chooseUserRow).modal({ keyboard: false });
     setTimeout(() => creditCardInput.focus(), 500);
+}
+
+function showDiscount(cardType) {
+    for (let itemIndex in barItemsStorage) {
+        let item = barItemsStorage[itemIndex];
+        let sale = getSaleByCardType(item.sales, cardType);
+
+        let div = document.querySelector(`.discount_div_${item.id}`);
+        div.hidden = sale === null;
+        div.querySelector('small').textContent = sale === null ? '' : `Скидка ${sale.percent}%`;
+
+        if (sale !== null) {
+            div.closest('.card').dataset.discount = sale.percent;
+        }
+    }
+}
+
+function getSaleByCardType(sales, cardType) {
+    for (let item in sales) {
+        if (sales[item].cardType === cardType) {
+            return sales[item];
+        }
+    }
+    return null;
 }
