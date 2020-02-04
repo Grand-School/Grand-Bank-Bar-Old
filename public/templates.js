@@ -23,15 +23,10 @@ const getBaseTextInput = (placeholder, name, value, hint) => getBaseInput(placeh
 const getBasePasswordInput = (placeholder, name, value, hint) => getBaseInput(placeholder, name, value, 'password', hint);
 const getBaseNumInput = (placeholder, name, value) => getBaseInput(placeholder, name, value, 'number');
 
-let getThemeSelect = theme => `
-    <div class="form-group">
-        <label for="theme" class="col-form-label">Тема</label>
-        <select name="theme" id="theme">
-            <option ${theme === 'LIGHT' ? 'selected' : ''} value="LIGHT">СВЕТЛАЯ</option>
-            <option ${theme === 'DARK' ? 'selected' : ''} value="DARK">ТЁМНАЯ</option>
-        </select>
-    </div>
-`;
+const getThemeSelect = theme => {
+    let items = [{name: 'СВЕТЛАЯ', value: 'LIGHT'}, {name: 'ТЁМНАЯ', value: 'DARK'}];
+    return getBaseSelect('Тема', 'theme', theme, items);
+};
 
 const getBaseInput = (placeholder, name, value, type, hint = '') => `
     <div class="form-group">
@@ -44,65 +39,64 @@ const getBaseInput = (placeholder, name, value, type, hint = '') => `
 
 const getBaseBoolean = (placeholder, name, selected, hint = '') => `
     <div class="form-group">
-        <label for="${name}" class="col-form-label">${placeholder}</label>
+        <input type="checkbox" id="${name}" name="${name}" ${selected ? 'checked' : ''}> 
+        <label for="${name}">${placeholder}</label> 
         ${hint}
-        <select class="form-control" id="${name}" name="${name}" placeholder="${placeholder}">
-           <option value="true" ${selected ? 'selected' : ''}>TRUE</option>
-           <option value="false" ${!selected ? 'selected' : ''}>FALSE</option>
+        <div class="invalid-feedback" hidden></div>
+    </div>
+`;
+
+const getBaseSelect = (placeholder, name, selected, items, hint = '', showLabel = true) => `
+    <div class="form-group">
+        ${showLabel ? `<label for="${name}" class="col-form-label">${placeholder}</label>` : ''}
+        ${hint}
+        <select name="${name}" id="${name}" class="form-control">
+            ${items.reduce((acc, item) => {
+                return acc += `
+                    <option value="${item.value}" ${selected === item.value ? 'selected' : ''}>${item.name}</option>
+                `;   
+            }, '')}
         </select>
     </div>
 `;
 
-const chooseCardType = selected => {
-    let result = `
-        <div class="form-group">
-            <label for="cardType" class="col-form-label">Тип кредитной карточки</label>
-            <select name="cardType" id="cardType" class="form-control">
-    `;
+const chooseCardType = (selected, showLabel = true) => {
+    let list = creditCards.reduce((acc, item) => {
+        acc.push({
+            name: item.name,
+            value: item.codeName
+        });
 
-    for (let card in creditCards) {
-        let name = creditCards[card].name;
-        let codeName = creditCards[card].codeName;
-        result += `<option value="${codeName}" ${selected === codeName ? 'selected' : ''}>${name}</option>`
-    }
+        return acc;
+    }, []);
+    return getBaseSelect('Тип кредитной карточки', 'cardType', selected, list, '', showLabel);
+};
 
-    result += `
-            </select>
-        </div>
-    `;
-    return result;
-}
-
-let getRolesDiv = role => {
+const getRolesDiv = role => {
     if (userRole !== 'ROLE_ADMIN') {
         return '';
     }
 
-    return `
-        <div class="form-group">
-            <label for="role" class="col-form-label">Роль</label>
-            <select name="role" id="role">
-                <option ${role === 'ROLE_ADMIN' ? 'selected' : ''}>ROLE_ADMIN</option>
-                <option ${role === 'ROLE_RESPONSIBLE' ? 'selected' : ''}>ROLE_RESPONSIBLE</option>
-                <option ${role === 'ROLE_TEACHER' ? 'selected' : ''}>ROLE_TEACHER</option>
-                <option ${role === 'ROLE_BARMEN' ? 'selected' : ''}>ROLE_BARMEN</option>
-                <option ${role === 'ROLE_USER' ? 'selected' : ''}>ROLE_USER</option>
-            </select>
-        </div>
-    `;
+    let list = createCorrectSelectList(['ROLE_ADMIN', 'ROLE_RESPONSIBLE', 'ROLE_TEACHER', 'ROLE_BARMEN', 'ROLE_USER']);
+    return getBaseSelect('Роль', 'role', role, list);
 };
 
-const chooseClass = (selected = '5') => {
-    let options = '';
-    classes.forEach(clazz => options += `<option value="${clazz}" ${selected === clazz ? 'selected' : ''}>${clazz}</option>`);
+const chooseClass = (selected = '5', includeTeacher = false) => {
+    let list = includeTeacher ? classesNoExcluded : classes;
+    let readyList = createCorrectSelectList(list);
+    return getBaseSelect('Клас', 'class', selected, readyList);
+};
 
-    return `
-        <label for="class" class="col-form-label">Класс</label>
-        <select name="class" id="class">
-            ${options}
-        </select>
-    `;
-}
+const createCorrectSelectList = list => {
+    return list.reduce((acc, item) => {
+        acc.push({
+            name: item,
+            value: item
+        });
+
+        return acc;
+    }, []);
+};
 
 const getHint = message => `
     <span class="fa fa-question" data-toggle="tooltip" data-placement="top" title="${message}"></span>
