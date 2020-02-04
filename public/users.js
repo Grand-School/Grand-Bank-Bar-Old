@@ -120,6 +120,7 @@ function render() {
             response.forEach(user => {
                 usersTable.insertAdjacentHTML('beforeend', `
                 <tr>
+                    <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.surname}</td>
                     <td>${user.username}</td>
