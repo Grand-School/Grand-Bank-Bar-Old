@@ -38,6 +38,7 @@ const getBaseInput = (placeholder, name, value, type, hint = '') => `
         <label for="${name}" class="col-form-label">${placeholder}</label>
         ${hint}
         <input type="${type}" class="form-control" id="${name}" name="${name}" placeholder="${placeholder}" value="${getNormalText(value)}">
+        <div class="invalid-feedback" hidden></div>
     </div>
 `;
 
