@@ -175,7 +175,6 @@ function password(userId, name) {
     $(editRow).modal();
 }
 
-
 function remove(userId, name) {
     if (!confirm(`Вы уверены что вы хотите удалить ${name}?`)) {
         return;

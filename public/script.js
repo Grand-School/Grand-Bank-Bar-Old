@@ -150,14 +150,19 @@ function getTime(date) {
     return hours + ':' + minutes;
 }
 
-function formDataToJson(form) {
-    let serializedArray = $(form).serializeArray();
+function formDataToArray(form) {
     let data = {};
+    form.querySelectorAll('input, select').forEach(element => {
+        if (element.type === 'checkbox') {
+            data[element.name] = element.checked;
+        } else {
+            data[element.name] = element.value;
+        }
+    });
+    return data;
+}
 
-    for (let item in serializedArray) {
-        let input = serializedArray[item];
-        data[input.name] = input.value;
-    }
-
+function formDataToJson(form) {
+    let data = formDataToArray(form);
     return JSON.stringify(data);
 }
