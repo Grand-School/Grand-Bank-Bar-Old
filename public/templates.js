@@ -1,6 +1,6 @@
-const getIdDiv = id => `<input type="hidden" name="id" value="${id}">`;
+const getIdDiv = id => getBaseHiddenInput('id', id);
 
-function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType, password, salary, RFID, theme, frozen }, usePassword = false) {
+function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType, password, salary, RFID, theme, frozen, telegramChat }, usePassword = false) {
     let pass = usePassword ? getBasePasswordInput('Пароль', 'password', password) : '';
     return `
         ${getBaseTextInput('Имя', 'name', name)}
@@ -16,12 +16,14 @@ function getBaseDataDiv({ name, surname, username, balance, creditCard, cardType
         ${getBaseTextInput('RFID', 'RFID', RFID )}
         ${getThemeSelect(theme)}
         ${getBaseBoolean('Заморожен счёт', 'frozen', frozen)}
+        ${telegramChat !== undefined && telegramChat !== null ? getBaseHiddenInput('telegramChat', telegramChat) : ''}
     `;
 }
 
 const getBaseTextInput = (placeholder, name, value, hint) => getBaseInput(placeholder, name, value, 'text', hint);
 const getBasePasswordInput = (placeholder, name, value, hint) => getBaseInput(placeholder, name, value, 'password', hint);
 const getBaseNumInput = (placeholder, name, value) => getBaseInput(placeholder, name, value, 'number');
+const getBaseHiddenInput = (name, value) => `<input type="hidden" name="${name}" value="${value}">`;
 
 const getThemeSelect = theme => {
     let items = [{name: 'СВЕТЛАЯ', value: 'LIGHT'}, {name: 'ТЁМНАЯ', value: 'DARK'}];
