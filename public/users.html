@@ -28,10 +28,6 @@
                  <span id="loadMsg" role="status" style="margin-bottom: -7px;" class="spinner-border-medium">
                     <span class="sr-only">Загрузка</span>
                 </span>
-                <button onclick="createUserModal()" class="btn btn-primary">
-                    <span class="fa fa-plus"></span>
-                    Добавить пользователя
-                </button>
                 <button onclick="render()" class="btn btn-secondary">
                     <span class="fa fa-refresh"></span>
                     Обновить
@@ -47,11 +43,8 @@
                         <th scope="col">Имя</th>
                         <th scope="col">Фамилия</th>
                         <th scope="col">Логин</th>
-                        <th scope="col">Роль</th>
                         <th scope="col">Баланс</th>
                         <th scope="col">Кредитная карта</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -64,12 +57,16 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="titleRow"></h4>
+                    <h4 class="modal-title" id="titleRow">Обновить RFID</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form id="formRow">
-                    </form>
+                    <input type="hidden" name="userId" id="userIdInput">
+                    <div class="form-group">
+                        <label for="newRFIDInput" class="col-form-label">Новый RFID</label>
+                        <input type="text" class="form-control" id="newRFIDInput" name="newRFIDInput" placeholder="Новый RFID">
+                        <div class="invalid-feedback" hidden></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
