@@ -5,10 +5,9 @@ const classList = document.getElementById('classList');
 const formInputs = document.getElementById('formInputs');
 const titleRow = document.getElementById('titleRow');
 const saveButton = document.getElementById('saveButton');
-const newRFIDInput = document.getElementById('newRFIDInput');
-const userIdInput = document.getElementById('userIdInput');
+const newRfidForm = document.getElementById('newRfidForm');
+let classes, lastCard, creditCards, storage, selectedUserId;
 let currentClass = 5;
-let classes, lastCard, creditCards;
 
 $(() => {
     $(loginRow).on('hide.bs.modal', e => {
@@ -19,12 +18,11 @@ $(() => {
     saveButton.addEventListener('click', e => {
         e.preventDefault();
 
-        let userId = userIdInput.value;
-        let newRFID = newRFIDInput.value;
-
         $.ajax({
-            url: baseLink + `bar/rfid/${userId}?newRFID=${newRFID}`,
-            method: 'POST'
+            url: baseLink + `bar/rfid/${selectedUserId}`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: formDataToJson(newRfidForm)
         }).done(() => {
             successNoty('Вы успешно обновили RFID пользователя!');
             $(editRow).modal('hide');
@@ -121,7 +119,8 @@ function render() {
         .then(response => {
             loadMsg.classList.remove('spinner-border');
             usersTable.innerHTML = '';
-            response.forEach(user => {
+            storage = response;
+            response.forEach((user, id) => {
                 usersTable.insertAdjacentHTML('beforeend', `
                 <tr>
                     <td>${user.id}</td>
@@ -130,16 +129,44 @@ function render() {
                     <td>${user.username}</td>
                     <td>${user.balance}</td>
                     <td>${getNormalText(user.creditCard)}</td>
-                    <td class="fa fa-pencil custom-button" onclick="connectRFID(${user.id}, '${user.name} ${user.surname}', '${getNormalText(user.RFID)}')">C</td>
+                    <td class="fa fa-pencil-alt custom-button" onclick="connectRFID(${id})"></td>
                 </tr>
                 `);
             });
         });
 }
 
-function connectRFID(userId, name, RFID) {
-    titleRow.textContent = `Обновить RFID: ${name}`;
-    userIdInput.value = userId;
-    newRFIDInput.value = RFID;
+function connectRFID(userId) {
+    let user = storage[userId];
+    titleRow.textContent = `Обновить RFID: ${user.name}`;
+    newRfidForm.innerHTML = `
+        <div class="form-group">
+            <label for="RFIDInput" class="col-form-label">RFID</label>
+            <input type="text" class="form-control" id="RFIDInput" name="RFID" placeholder="RFID" value="${user.RFID}">
+            <div class="invalid-feedback" hidden></div>
+        </div>
+        <div class="form-group">
+            <label for="creditCardInput" class="col-form-label">Номер карты</label>
+            <input type="text" class="form-control" id="creditCardInput" name="creditCard" placeholder="Номер карты" value="${user.creditCard}">
+            <div class="invalid-feedback" hidden></div>
+        </div>
+        ${chooseCardType(user.cardType)}
+    `;
+    selectedUserId = user.id;
     $(editRow).modal();
+}
+
+function chooseCardType(cardType) {
+    return `
+        <div class="form-group">
+            <label for="cardTypeInput" class="col-form-label">Тип кредитной карты</label>
+            <select name="cardType" id="cardTypeInput" class="form-control">
+                ${creditCards.reduce((acc, item) => {
+                    return acc += `
+                        <option value="${item.codeName}" ${cardType === item.codeName ? 'selected' : ''}>${item.name}</option>
+                    `;   
+                }, '')}
+            </select>
+        </div>
+    `;
 }
