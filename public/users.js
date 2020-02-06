@@ -38,7 +38,12 @@ $(() => {
         }
 
         lastCard = card;
-        newRFIDInput.value = card;
+
+        let input = newRfidForm.querySelector('input[name="RFID"]');
+        if (input !== undefined && input !== null) {
+            input.value = card;
+        }
+        
         successNoty('Set user RFID = ' + card);
     });
 });
@@ -138,7 +143,7 @@ function render() {
 
 function connectRFID(userId) {
     let user = storage[userId];
-    titleRow.textContent = `Обновить RFID: ${user.name}`;
+    titleRow.textContent = `Обновить RFID: ${user.name} ${user.surname}`;
     newRfidForm.innerHTML = `
         <div class="form-group">
             <label for="RFIDInput" class="col-form-label">RFID</label>
