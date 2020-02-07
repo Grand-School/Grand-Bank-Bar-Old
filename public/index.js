@@ -13,10 +13,12 @@ const loginInput = document.getElementById('loginInput');
 const passwordInput = document.getElementById('passwordInput');
 const tax = document.getElementById('tax');
 const withdrawSpan = document.getElementById('withdraw');
+const nameSurnameInput = document.getElementById('nameSurnameInput');
 const pincodeSound = new Audio('pincode-succes.mp3');
 let pincodeCircle = document.querySelector('.circle-loader');
 let pincodeCheckmark = document.querySelector('.checkmark');
 let pincodeCallback = function () {};
+const showUserData = user => user.name + ' ' + user.surname;
 const cancel = () => {
     $(chooseUserRow).modal();
     lastRfid = null;
@@ -109,6 +111,43 @@ $(() => {
             });
     });
 
+    $(nameSurnameInput).typeahead({
+        source: (input, callback) => {
+            if (input.match(/^[0-9]+$/)) {
+                callback([]);
+                return;
+            }
+
+            $.ajax(baseLink + 'users/find?user=' + input)
+                .done(response => callback(response));
+        },
+        displayText: user => {
+            return {
+                name: showUserData(user),
+                card: user.creditCard
+            }
+        },
+        matcher: user => user.creditCard !== undefined,
+        highlighter: user => {
+            let query = nameSurnameInput.value;
+            let name = user.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                return '<strong>' + match + '</strong>'
+            });
+            return `
+                <li class="ml-2">
+                    <a role="option">${name}</a>
+                    <span class="text-muted">${user.card}</span>
+                </li>
+            `;
+        },
+        afterSelect: user => {
+            nameSurnameInput.value = showUserData(user);
+            loadUser(user);
+        },
+        sorter: users => users,
+        minLength: 2
+    });
+
     function loadUser(user) {
         selectedUser = user;
         userName.textContent = user.name + ' ' + user.surname;
@@ -122,6 +161,7 @@ $(() => {
         $(chooseUserRow).modal('hide');
         rowHideAble = false;
         creditCardInput.value = '';
+        nameSurnameInput.value = '';
         showDiscount(user.cardType);
     }
 });

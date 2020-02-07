@@ -10,6 +10,7 @@ const socket = require('socket.io')(http);
 let user;
 
 app.use(express.static('public'));
+app.use(express.static('dist'));
 app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static(__dirname + '/node_modules/noty/lib'));
 app.use(express.static(__dirname + '/node_modules/jquery/dist'));

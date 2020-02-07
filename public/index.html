@@ -15,6 +15,7 @@
     <script src="js/bootstrap.min.js" defer></script>
     <script src="noty.min.js" defer></script>
     <script src="/socket.io/socket.io.js" defer></script>
+    <script src="typeahead.js" defer></script>
     <script src="script.js" defer></script>
     <script src="index.js" defer></script>
 </head>
@@ -61,6 +62,11 @@
                     <span class="text-muted">Введите номер кредитной карточки клиента</span>
                     <div class="center mt-2">
                         <input type="number" id="creditCardInput" class="beautiful-input" style="width: 50%">
+                    </div>
+                    <hr>
+                    <span class="text-muted">Введите имя или фамилию</span>
+                    <div class="center mt-2">
+                        <input type="text" id="nameSurnameInput" class="beautiful-input typeahead" data-provide="typeahead" style="width: 100%">
                     </div>
                 </div>
             </div>
