@@ -147,12 +147,12 @@ function connectRFID(userId) {
     newRfidForm.innerHTML = `
         <div class="form-group">
             <label for="RFIDInput" class="col-form-label">RFID</label>
-            <input type="text" class="form-control" id="RFIDInput" name="RFID" placeholder="RFID" value="${user.RFID}">
+            <input type="text" class="form-control" id="RFIDInput" name="RFID" placeholder="RFID" value="${getNormalText(user.RFID)}">
             <div class="invalid-feedback" hidden></div>
         </div>
         <div class="form-group">
             <label for="creditCardInput" class="col-form-label">Номер карты</label>
-            <input type="text" class="form-control" id="creditCardInput" name="creditCard" placeholder="Номер карты" value="${user.creditCard}">
+            <input type="text" class="form-control" id="creditCardInput" name="creditCard" placeholder="Номер карты" value="${getNormalText(user.creditCard)}">
             <div class="invalid-feedback" hidden></div>
         </div>
         ${chooseCardType(user.cardType)}
