@@ -33,7 +33,7 @@ $(() => {
     let socket = io();
     socket.on('card', card => {
         card = card.substr(20);
-        if (lastCard === card) {
+        if (!card.startsWith('Card detected, UID:') || lastCard === card) {
             return;
         }
 
