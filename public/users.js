@@ -87,7 +87,7 @@ function loadInfo() {
 
     $.get(baseLink + 'users/profile')
         .done(response => {
-            $.get(baseLink + 'users/classes')
+            $.get(baseLink + 'api/classes')
                 .done(response => {
                     classes = response;
 
