@@ -134,7 +134,7 @@ $(() => {
                 return '<strong>' + match + '</strong>'
             });
             return `
-                <li class="ml-2">
+                <li class="pl-2 pr-2">
                     <a role="option">${name}</a>
                     <span class="text-muted">${user.card}</span>
                 </li>
