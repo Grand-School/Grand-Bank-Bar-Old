@@ -7,6 +7,10 @@
 4) Теперь вы можете зайти на сайт по ссылке localhost:3000.
 5) Для нормального использование нужно отключить в браузере CORS. Создайте ярлык и пропишите обьект `"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security --disable-gpu --user-data-dir=C:/chromeTemp`.
 
+# Desktop приложение
+Для создания Desktop приложения введите команду `node build.js`. \
+После этого создаться папка с приложением. Для его функционирования вам по прежнему нужно запускать сервер командой `npm run start`.
+
 # Arduino
 1) Прошивка Arduino - `Arduino.info`.
 2) Собрать прибор можно по [видео](https://youtu.be/-hA30_l60nw?t=436).
