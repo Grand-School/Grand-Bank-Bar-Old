@@ -179,35 +179,39 @@ function loadInfo() {
     $.get(baseLink + 'api/creditcard')
         .done(response => {
             creditCards = response;
+            renderBuyItems();
+        });
+}
 
-            $.get(baseLink + 'bar/items?shown=true')
-                .done(response => {
-                    barItemsStorage = response;
-                    response.forEach(item => {
-                        let img = '';
-                        if (item.image !== undefined && item.image !== '') {
-                            img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
-                        }
-                        itemsToBuy.insertAdjacentHTML('beforeend', `
-                            <div class="col-sm-2">
-                                <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
-                                    ${img}
-                                    <div class="card-body">
-                                        <h5 class="card-title text-center">
-                                            ${item.name}
-                                            <span class="badge badge-primary badge-pill">${item.price}</span>
-                                            <span class="badge badge-secondary badge-pill">${item.count}</span>
-                                        </h5>
-                                        <div class="discount_div_${item.id} text-center">
-                                            <hr>
-                                            <small class="text-muted"></small>
-                                        </div>
-                                    </div>
+function renderBuyItems() {
+    $.get(baseLink + 'bar/items?shown=true')
+        .done(response => {
+            barItemsStorage = response;
+            itemsToBuy.innerHTML = '';
+            response.forEach(item => {
+                let img = '';
+                if (item.image !== undefined && item.image !== '') {
+                    img = `<img src="${barImgUrl + item.image}" class="card-img-top" alt="${item.name}">`;
+                }
+                itemsToBuy.insertAdjacentHTML('beforeend', `
+                    <div class="col-sm-2">
+                        <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
+                            ${img}
+                            <div class="card-body">
+                                <h5 class="card-title text-center">
+                                    ${item.name}
+                                    <span class="badge badge-primary badge-pill">${item.price}</span>
+                                    <span class="badge badge-secondary badge-pill">${item.count}</span>
+                                </h5>
+                                <div class="discount_div_${item.id} text-center">
+                                    <hr>
+                                    <small class="text-muted"></small>
                                 </div>
                             </div>
-                        `);
-                    })
-                });
+                        </div>
+                    </div>
+                `);
+            })
         });
 }
 
@@ -239,6 +243,7 @@ function buy(pinCode) {
             }, 1000);
         }
     }).done(response => {
+        renderBuyItems();
         togglePinComplete();
         pincodeSound.play();
         successNoty("Товарвы были успешны куплены!");
